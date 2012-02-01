@@ -1,0 +1,11 @@
+name: GoldBank
+main: GoldBank.tjnome.GoldBank.GoldBank
+version: 1.0
+website: 'http://www.minecraft.no'
+authors: ['tjnome']
+description: GoldBank Plugin
+commands:
+    bank:
+        description: bank.
+        usage: |
+               /<command>
