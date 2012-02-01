@@ -3,8 +3,10 @@ package GoldBank.tjnome.GoldBank.Listner;
 import java.io.File;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import GoldBank.tjnome.GoldBank.GoldBank;
@@ -32,7 +34,7 @@ import GoldBank.tjnome.GoldBank.conf.GoldBankConf;
 *  @author tjnome
 */
 
-public class GoldBankPlayerListner extends PlayerListener {
+public class GoldBankPlayerListner implements Listener {
 	
 	private final GoldBank plugin;
 	
@@ -40,6 +42,7 @@ public class GoldBankPlayerListner extends PlayerListener {
 		this.plugin = plugin;
 	}
 	
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		GoldBankConf cfg = this.plugin.getGoldBankConf();
@@ -53,6 +56,7 @@ public class GoldBankPlayerListner extends PlayerListener {
 		
 	}
 	
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		GoldBankConf cfg = this.plugin.getGoldBankConf();
 		Player player = event.getPlayer();

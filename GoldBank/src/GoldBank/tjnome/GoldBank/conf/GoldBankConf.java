@@ -43,7 +43,6 @@ public class GoldBankConf {
 		this.plugin = plugin;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void load() throws Exception {
 		/*this.BinFile = new File(this.plugin.getDataFolder(), "bank.bin");
 		if (this.BinFile.exists()) {

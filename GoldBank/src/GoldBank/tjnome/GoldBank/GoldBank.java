@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -43,7 +42,6 @@ public class GoldBank extends JavaPlugin {
 	
 	public PluginManager pm;
 	protected final GoldBankConf configuration;
-	protected final GoldBankPlayerListner playerListner = new GoldBankPlayerListner(this);
 	
 	public GoldBank() {
 		configuration = new GoldBankConf(this);
@@ -77,8 +75,7 @@ public class GoldBank extends JavaPlugin {
 	
 	public void registerEvents() {
 		this.pm = getServer().getPluginManager();
-		this.pm.registerEvent(Event.Type.PLAYER_JOIN, this.playerListner, Event.Priority.Normal, this);
-		this.pm.registerEvent(Event.Type.PLAYER_QUIT, this.playerListner, Event.Priority.Normal, this);
+		getServer().getPluginManager().registerEvents(new GoldBankPlayerListner(this), this);
 	}
 	
 	public GoldBankConf getGoldBankConf() {
