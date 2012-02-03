@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -87,8 +86,8 @@ public class GoldBank extends JavaPlugin {
 			Player player = (Player) sender;
 			if (command.getName().equalsIgnoreCase("bank")) {
 				if (args.length == 0) {
-					player.sendMessage("------------" + ChatColor.GREEN + " GoldBank ASA " + ChatColor.WHITE + "-------------");
-					player.sendMessage("/bank info" + " Viser hvor mye gull du har på kontoen");
+					player.sendMessage("------------" + ChatColor.GREEN + " " + this.configuration.getBankName() + " " + ChatColor.WHITE + "-------------");
+					player.sendMessage(ChatColor.BLUE + "/bank info" + " " + ChatColor.WHITE + this.configuration.CommandInfo());
 					player.sendMessage("/bank inn" + " Tar inn gull i banken");
 					player.sendMessage("/bank ut [antall]" + " Tar ut gull fra banken");
 					player.sendMessage("/bank betal [bruker] [antall] [grunn] " + " Betal en bruker");
@@ -106,7 +105,7 @@ public class GoldBank extends JavaPlugin {
 						int amount = 0;
 						for (ItemStack stack : player.getInventory().getContents()) {
 							if (stack != null) {
-								if (stack.getType() == Material.GOLD_INGOT) {
+								if (stack.getTypeId() == this.configuration.getMaterialId()) {
 									amount += stack.getAmount();
 								}
 							}
@@ -122,7 +121,7 @@ public class GoldBank extends JavaPlugin {
 								this.configuration.getBank().put(player.getName(), new BankData());
 								this.configuration.getBank().get(player.getName()).setBankAmount(amount);
 							}
-							player.getInventory().remove(Material.GOLD_INGOT);
+							player.getInventory().remove(this.configuration.getMaterialId());
 							player.sendMessage("Du satt inn: " + amount + " gull");
 							player.sendMessage("Du har nå på konto: " + this.configuration.getBank().get(player.getName()).getBankAmount() + " gull");
 							return true;
@@ -138,7 +137,7 @@ public class GoldBank extends JavaPlugin {
 										int value = (this.configuration.getBank().get(player.getName()).getBankAmount() - amount);
 										this.configuration.getBank().get(player.getName()).setBankAmount(value);
 										ItemStack[] gold = new ItemStack[1];
-										gold[0] = new ItemStack(Material.GOLD_INGOT, amount);
+										gold[0] = new ItemStack(this.configuration.getMaterialId(), amount);
 										HashMap<Integer, ItemStack> igjen = player.getInventory().addItem(gold);
 										int gulligjen = 0;
 										for (Entry<Integer, ItemStack> e : igjen.entrySet()) {

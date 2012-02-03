@@ -36,8 +36,15 @@ public class GoldBankConf {
 	private GoldBank plugin;
 	private YamlConfiguration config;
 	private File configFile;
-	private File BinFile;
 	private HashMap<String, BankData> bankinfo = new HashMap<String, BankData>();
+	private HashMap<String, Object> configDefaults = new HashMap<String, Object>();
+	
+	private int materialid;
+	private String materialname;
+	
+	private String bankname;
+	private String CommandInfo;
+	
 	
 	public GoldBankConf(GoldBank plugin) {
 		this.plugin = plugin;
@@ -51,12 +58,41 @@ public class GoldBankConf {
 		this.config = new YamlConfiguration();
 		this.configFile = new File(this.plugin.getDataFolder(), "config.yml");
 		
+		this.configDefaults.put("Bank.Name", "GoldBank ASA");
+		this.configDefaults.put("Bank.Material-Id", 266);
+		this.configDefaults.put("Bank.Material-Name", "Gold");
+		this.configDefaults.put("Bank.Command.Info", "Show you have much #Value you have in your bank");
 		
+		if (!this.configFile.exists()) {
+			for (String key : this.configDefaults.keySet()) {
+				this.config.set(key, this.configDefaults.get(key));
+			}
+			this.config.save(this.configFile);
+			
+		} else {
+			this.config.load(configFile);
+		}
 		
+		this.materialid = this.config.getInt("Bank.value");
+		this.bankname = this.config.getString("Bank.Name");
+		this.materialname = this.config.getString("Bank.Material-Name");
+		this.CommandInfo = this.config.getString("Bank.Command.Info");
 	}
 	
 	public HashMap<String, BankData> getBank() {
 		return this.bankinfo;
+	}
+	
+	public int getMaterialId() {
+		return this.materialid;
+	}
+	
+	public String getBankName() {
+		return this.bankname;
+	}
+	
+	public String CommandInfo() {
+		return this.CommandInfo.replaceAll("#Value", this.materialname);
 	}
 	
 	public void cleanup() throws Exception {
