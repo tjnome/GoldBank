@@ -1,7 +1,12 @@
 package GoldBank.tjnome.GoldBank;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -101,6 +106,21 @@ public class GoldBank extends JavaPlugin {
 							player.sendMessage("Du har ingen gull i banken");
 							return true;
 						}
+					} else if (args[0].equalsIgnoreCase("top")) {
+						/*HashMap<String, Integer> unsortetBank = new HashMap<String, Integer>();
+						for (Entry<String, BankData> entry : this.configuration.getBank().entrySet()) {
+							unsortetBank.put(entry.getKey(), entry.getValue().getBankAmount());
+						}*/
+						HashMap<String, Integer> sortedBank = new HashMap<String, Integer>();
+						sortedBank = sortHashMap(this.configuration.banktop);
+						int count = 0;
+						player.sendMessage(ChatColor.BLUE + "Top 5");
+						for (String name : sortedBank.keySet()){
+							if (count < 5) {
+								player.sendMessage(name + " " + sortedBank.get(name));
+								count++;
+							}
+						}
 					} else if (args[0].equalsIgnoreCase("inn")) {
 						int amount = 0;
 						for (ItemStack stack : player.getInventory().getContents()) {
@@ -117,9 +137,11 @@ public class GoldBank extends JavaPlugin {
 							if (this.configuration.getBank().containsKey(player.getName())) {
 								int value = this.configuration.getBank().get(player.getName()).getBankAmount();
 								this.configuration.getBank().get(player.getName()).setBankAmount(value + amount);
+								this.configuration.banktop.put(player.getName(), value + amount);
 							} else {
 								this.configuration.getBank().put(player.getName(), new BankData());
 								this.configuration.getBank().get(player.getName()).setBankAmount(amount);
+								this.configuration.banktop.put(player.getName(), amount);
 							}
 							player.getInventory().remove(this.configuration.getMaterialId());
 							player.sendMessage("Du satt inn: " + amount + " gull");
@@ -136,6 +158,7 @@ public class GoldBank extends JavaPlugin {
 									if (this.configuration.getBank().get(player.getName()).getBankAmount() >= amount) {
 										int value = (this.configuration.getBank().get(player.getName()).getBankAmount() - amount);
 										this.configuration.getBank().get(player.getName()).setBankAmount(value);
+										this.configuration.banktop.put(player.getName(), value);
 										ItemStack[] gold = new ItemStack[1];
 										gold[0] = new ItemStack(this.configuration.getMaterialId(), amount);
 										HashMap<Integer, ItemStack> igjen = player.getInventory().addItem(gold);
@@ -147,6 +170,7 @@ public class GoldBank extends JavaPlugin {
 										if (gulligjen != 0) {
 											int gullibank = this.configuration.getBank().get(player.getName()).getBankAmount();
 											this.configuration.getBank().get(player.getName()).setBankAmount(gullibank + gulligjen);
+											this.configuration.banktop.put(player.getName(), gullibank + gulligjen);
 											player.sendMessage("Du hadde ikke plass i inventorien, og vi retunerete " + gulligjen + " gull");
 											return true;
 										}
@@ -181,13 +205,17 @@ public class GoldBank extends JavaPlugin {
 											if (this.configuration.getBank().containsKey(victim.getName())) {
 												int playermoney = this.configuration.getBank().get(player.getName()).getBankAmount();
 												this.configuration.getBank().get(player.getName()).setBankAmount(playermoney - amount);
+												this.configuration.banktop.put(player.getName(), playermoney - amount);
 												int victimmoney = this.configuration.getBank().get(player.getName()).getBankAmount();
 												this.configuration.getBank().get(victim.getName()).setBankAmount(victimmoney + amount);
+												this.configuration.banktop.put(victim.getName(), victimmoney + amount);
 											} else {
 												int playermoney = this.configuration.getBank().get(player.getName()).getBankAmount();
 												this.configuration.getBank().get(player.getName()).setBankAmount(playermoney - amount);
+												this.configuration.banktop.put(player.getName(), playermoney - amount);
 												this.configuration.getBank().put(player.getName(), new BankData());
 												this.configuration.getBank().get(victim.getName()).setBankAmount(amount);
+												this.configuration.banktop.put(player.getName(), amount);
 											}
 											StringBuilder build = new StringBuilder();
 											for (int i = 3; i < args.length; i++) {
@@ -234,5 +262,22 @@ public class GoldBank extends JavaPlugin {
 		}
 		return false;
 	}
-
+	
+	private HashMap<String, Integer> sortHashMap(HashMap<String, Integer> input){
+	    Map<String, Integer> tempMap = new HashMap<String, Integer>();
+	    for (String wsState : input.keySet()){
+	        tempMap.put(wsState,input.get(wsState));
+	    }
+	    List<String> mapKeys = new ArrayList<String>(tempMap.keySet());
+	    List<Integer> mapValues = new ArrayList<Integer>(tempMap.values());
+	    HashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+	    TreeSet<Integer> sortedSet = new TreeSet<Integer>(mapValues);
+	    Object[] sortedArray = sortedSet.toArray();
+	    int size = sortedArray.length;
+	    for (int i=(size-1); i >= 0; i--) {
+	        sortedMap.put(mapKeys.get(mapValues.indexOf(sortedArray[i])), 
+	                      (Integer)sortedArray[i]);
+	    }
+	    return sortedMap;
+	}
 }

@@ -36,8 +36,10 @@ public class GoldBankConf {
 	private GoldBank plugin;
 	private YamlConfiguration config;
 	private File configFile;
+	private File binFile;
 	private HashMap<String, BankData> bankinfo = new HashMap<String, BankData>();
 	private HashMap<String, Object> configDefaults = new HashMap<String, Object>();
+	public HashMap<String, Integer> banktop = new HashMap<String, Integer>();
 	
 	private int materialid;
 	private String materialname;
@@ -50,17 +52,18 @@ public class GoldBankConf {
 		this.plugin = plugin;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void load() throws Exception {
-		/*this.BinFile = new File(this.plugin.getDataFolder(), "bank.bin");
-		if (this.BinFile.exists()) {
-			this.bankinfo = (HashMap<String, Integer>)load(this.BinFile);
-		}*/
+		this.binFile = new File(this.plugin.getDataFolder(), "bank.bin");
+		if (this.binFile.exists()) {
+			this.banktop = (HashMap<String, Integer>)load(this.binFile);
+		}
 		this.config = new YamlConfiguration();
 		this.configFile = new File(this.plugin.getDataFolder(), "config.yml");
 		
 		this.configDefaults.put("Bank.Name", "GoldBank ASA");
-		this.configDefaults.put("Bank.Material-Id", 266);
-		this.configDefaults.put("Bank.Material-Name", "Gold");
+		this.configDefaults.put("Bank.Material.Id", 266);
+		this.configDefaults.put("Bank.Material.Name", "Gold");
 		this.configDefaults.put("Bank.Command.Info", "Show you have much #Value you have in your bank");
 		
 		if (!this.configFile.exists()) {
@@ -73,9 +76,9 @@ public class GoldBankConf {
 			this.config.load(configFile);
 		}
 		
-		this.materialid = this.config.getInt("Bank.value");
+		this.materialid = this.config.getInt("Bank.Material.Id");
 		this.bankname = this.config.getString("Bank.Name");
-		this.materialname = this.config.getString("Bank.Material-Name");
+		this.materialname = this.config.getString("Bank.Material.Name");
 		this.CommandInfo = this.config.getString("Bank.Command.Info");
 	}
 	
@@ -106,6 +109,9 @@ public class GoldBankConf {
 				e.printStackTrace();
 			}
 		}
+		if (!(banktop.isEmpty())) {
+			save(banktop, this.binFile);
+		}
 	}
 	
 	public static void save(Object obj, File binFile) throws Exception {
@@ -121,5 +127,4 @@ public class GoldBankConf {
 		ois.close();
 		return result;
 	}
-
 }
