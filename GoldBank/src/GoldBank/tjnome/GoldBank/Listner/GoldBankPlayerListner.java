@@ -52,6 +52,11 @@ public class GoldBankPlayerListner implements Listener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			boolean success = (new File(this.plugin.getDataFolder() + "/bank/").mkdirs());
+			if (!success) {
+				System.out.println("[GoldBank] Can't make sub folders");
+			}
 		}
 		
 	}
