@@ -46,6 +46,14 @@ public class GoldBankConf {
 	
 	private String bankname;
 	private String CommandInfo;
+	private String CommandInfo1;
+	private String CommandInfo2;
+	private String CommandInfo3;
+	private String CommandTop;
+	private String CommandIn;
+	private String CommandIn1;
+	private String CommandOut;
+	private String CommandPay;
 	
 	
 	public GoldBankConf(GoldBank plugin) {
@@ -64,7 +72,20 @@ public class GoldBankConf {
 		this.configDefaults.put("Bank.Name", "GoldBank ASA");
 		this.configDefaults.put("Bank.Material.Id", 266);
 		this.configDefaults.put("Bank.Material.Name", "Gold");
-		this.configDefaults.put("Bank.Command.Info", "Show you have much #Value you have in your bank");
+		
+		this.configDefaults.put("Bank.Command.Info", "Show you have much #Value you have in your bank account");
+		this.configDefaults.put("Bank.Command.Info-1-1", "You have: ");
+		this.configDefaults.put("Bank.Command.Info-1-2", "#Value in your bank account");
+		this.configDefaults.put("Bank.Command.Info-2-1", "You have no #Value on your bank account");
+		
+		this.configDefaults.put("Bank.Command.Top", "Top five on the server");
+		
+		this.configDefaults.put("Bank.Command.In", "Take in #Value on your bank account");
+		this.configDefaults.put("Bank.Command.In-1-1", "You can't put #Value into your bank account when you don't have it in your inventory");
+		
+		
+		this.configDefaults.put("Bank.Command.Out", "Take out #Value from your bank account");
+		this.configDefaults.put("Bank.Command.Pay", "Pay a user with #Value from your bank account");
 		
 		if (!this.configFile.exists()) {
 			for (String key : this.configDefaults.keySet()) {
@@ -79,7 +100,19 @@ public class GoldBankConf {
 		this.materialid = this.config.getInt("Bank.Material.Id");
 		this.bankname = this.config.getString("Bank.Name");
 		this.materialname = this.config.getString("Bank.Material.Name");
+		
 		this.CommandInfo = this.config.getString("Bank.Command.Info");
+		this.CommandInfo1 = this.config.getString("Bank.Command.Info-1-1");
+		this.CommandInfo2 = this.config.getString("Bank.Command.Info-1-2");
+		this.CommandInfo3 = this.config.getString("Bank.Command.Info-2-1");
+		
+		this.CommandTop = this.config.getString("Bank.Command.Top");
+		
+		this.CommandIn = this.config.getString("Bank.Command.In");
+		this.CommandIn1 = this.config.getString("Bank.Command.In-1-1");
+		
+		this.CommandOut = this.config.getString("Bank.Command.Out");
+		this.CommandPay = this.config.getString("Bank.Command.Pay");
 	}
 	
 	public HashMap<String, BankData> getBank() {
@@ -96,6 +129,38 @@ public class GoldBankConf {
 	
 	public String CommandInfo() {
 		return this.CommandInfo.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandInfo1() {
+		return this.CommandInfo1.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandInfo2() {
+		return this.CommandInfo2.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandInfo3() {
+		return this.CommandInfo3.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandTop() {
+		return this.CommandTop.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandIn() {
+		return this.CommandIn.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandIn1() {
+		return this.CommandIn1.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandOut() {
+		return this.CommandOut.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandPay() {
+		return this.CommandPay.replaceAll("#Value", this.materialname);
 	}
 	
 	public void cleanup() throws Exception {

@@ -93,24 +93,21 @@ public class GoldBank extends JavaPlugin {
 				if (args.length == 0) {
 					player.sendMessage("------------" + ChatColor.GREEN + " " + this.configuration.getBankName() + " " + ChatColor.WHITE + "-------------");
 					player.sendMessage(ChatColor.BLUE + "/bank info" + " " + ChatColor.WHITE + this.configuration.CommandInfo());
-					player.sendMessage("/bank inn" + " Tar inn gull i banken");
-					player.sendMessage("/bank ut [antall]" + " Tar ut gull fra banken");
-					player.sendMessage("/bank betal [bruker] [antall] [grunn] " + " Betal en bruker");
+					player.sendMessage(ChatColor.BLUE + "/bank top" + " " + ChatColor.WHITE + this.configuration.CommandTop());
+					player.sendMessage(ChatColor.BLUE + "/bank in" + ChatColor.WHITE + this.configuration.CommandIn());
+					player.sendMessage(ChatColor.BLUE + "/bank ut [amount]" + ChatColor.WHITE + this.configuration.CommandOut());
+					player.sendMessage(ChatColor.BLUE + "/bank betal [name] [amount] [reason] " + ChatColor.WHITE + this.configuration.CommandPay());
 					return true;
 				} else if (args.length == 1) {
 					if (args[0].equalsIgnoreCase("info")) {
 						if (this.configuration.getBank().containsKey(player.getName())) {
-							player.sendMessage("Du har: " + this.configuration.getBank().get(player.getName()).getBankAmount() + " gull i banken");
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandInfo1() + ChatColor.WHITE + this.configuration.getBank().get(player.getName()).getBankAmount() + ChatColor.BLUE + this.configuration.CommandInfo2());
 							return true;
 						} else {
-							player.sendMessage("Du har ingen gull i banken");
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandInfo2());
 							return true;
 						}
 					} else if (args[0].equalsIgnoreCase("top")) {
-						/*HashMap<String, Integer> unsortetBank = new HashMap<String, Integer>();
-						for (Entry<String, BankData> entry : this.configuration.getBank().entrySet()) {
-							unsortetBank.put(entry.getKey(), entry.getValue().getBankAmount());
-						}*/
 						HashMap<String, Integer> sortedBank = new HashMap<String, Integer>();
 						sortedBank = sortHashMap(this.configuration.banktop);
 						int count = 0;
@@ -131,7 +128,7 @@ public class GoldBank extends JavaPlugin {
 							}
 						}
 						if (amount == 0) {
-							player.sendMessage("Du kan ikke sette inn gull, der du ikke har gull i inventory");
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandIn1());
 							
 						} else {
 							if (this.configuration.getBank().containsKey(player.getName())) {
