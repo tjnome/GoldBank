@@ -49,11 +49,27 @@ public class GoldBankConf {
 	private String CommandInfo1;
 	private String CommandInfo2;
 	private String CommandInfo3;
+	
 	private String CommandTop;
+	
 	private String CommandIn;
 	private String CommandIn1;
+	private String CommandIn2;
+	private String CommandIn3;
+	
 	private String CommandOut;
+	private String CommandOut1;
+	private String CommandOut2;
+	private String CommandOut3;
+	private String CommandOut4;
+	
+	private String InvalidNumber;
+	
 	private String CommandPay;
+	private String CommandPay1;
+	private String CommandPay2;
+	private String CommandPay3;
+	private String CommandPay4;
 	
 	
 	public GoldBankConf(GoldBank plugin) {
@@ -80,12 +96,24 @@ public class GoldBankConf {
 		
 		this.configDefaults.put("Bank.Command.Top", "Top five on the server");
 		
-		this.configDefaults.put("Bank.Command.In", "Take in #Value on your bank account");
+		this.configDefaults.put("Bank.Command.In", "You put #Value on your bank account");
 		this.configDefaults.put("Bank.Command.In-1-1", "You can't put #Value into your bank account when you don't have it in your inventory");
-		
-		
+		this.configDefaults.put("Bank.Command.In-2-1", "You stored #Amount #Value in your bank");
+		this.configDefaults.put("Bank.Command.In-2-2", "You have now #Amount #Value in your bank");
+			
 		this.configDefaults.put("Bank.Command.Out", "Take out #Value from your bank account");
+		this.configDefaults.put("Bank.Command.Out-1-1", "You took out #Amount #Value from your bank account");
+		this.configDefaults.put("Bank.Command.Out-1-2", "Your inventory is not large enough. Returning #Amount #Value to your bank account");
+		this.configDefaults.put("Bank.Command.Out-2-1", "You typed a higher value than you have in your bank account");
+		this.configDefaults.put("Bank.Command.Out-2-2", "You have #Amount #Value in your bank account");
+		
+		this.configDefaults.put("Bank.Command.Number", "Invalid number");
+		
 		this.configDefaults.put("Bank.Command.Pay", "Pay a user with #Value from your bank account");
+		this.configDefaults.put("Bank.Command.Pay-1-1", "You paid #Amount #Value to #Player");
+		this.configDefaults.put("Bank.Command.Pay-1-2", "You got #Amount #Value from #Player");
+		this.configDefaults.put("Bank.Command.Pay-2-1", "You can't pay yourself");
+		this.configDefaults.put("Bank.Command.Pay-2-2", "The player you want to pay is not online or does not exist");
 		
 		if (!this.configFile.exists()) {
 			for (String key : this.configDefaults.keySet()) {
@@ -110,9 +138,22 @@ public class GoldBankConf {
 		
 		this.CommandIn = this.config.getString("Bank.Command.In");
 		this.CommandIn1 = this.config.getString("Bank.Command.In-1-1");
+		this.CommandIn2 = this.config.getString("Bank.Command.In-2-1");
+		this.CommandIn3 = this.config.getString("Bank.Command.In-2-2");
 		
 		this.CommandOut = this.config.getString("Bank.Command.Out");
+		this.CommandOut1 = this.config.getString("Bank.Command.Out-1-1");
+		this.CommandOut2 = this.config.getString("Bank.Command.Out-1-2");
+		this.CommandOut3 = this.config.getString("Bank.Command.Out-2-1");
+		this.CommandOut4 = this.config.getString("Bank.Command.Out-2-2");
+		
+		this.InvalidNumber = this.config.getString("Bank.Command.Number");
+		
 		this.CommandPay = this.config.getString("Bank.Command.Pay");
+		this.CommandPay1 = this.config.getString("Bank.Command.Pay-1-1");
+		this.CommandPay2 = this.config.getString("Bank.Command.Pay-1-2");
+		this.CommandPay3 = this.config.getString("Bank.Command.Pay-2-1");
+		this.CommandPay4 = this.config.getString("Bank.Command.Pay-2-2");
 	}
 	
 	public HashMap<String, BankData> getBank() {
@@ -121,6 +162,10 @@ public class GoldBankConf {
 	
 	public int getMaterialId() {
 		return this.materialid;
+	}
+	
+	public String getMaterialName() {
+		return this.materialname;
 	}
 	
 	public String getBankName() {
@@ -155,12 +200,56 @@ public class GoldBankConf {
 		return this.CommandIn1.replaceAll("#Value", this.materialname);
 	}
 	
+	public String CommandIn2() {
+		return this.CommandIn2.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandIn3() {
+		return this.CommandIn3.replaceAll("#Value", this.materialname);
+	}
+	
 	public String CommandOut() {
 		return this.CommandOut.replaceAll("#Value", this.materialname);
 	}
 	
+	public String CommandOut1() {
+		return this.CommandOut1.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandOut2() {
+		return this.CommandOut2.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandOut3() {
+		return this.CommandOut3.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandOut4() {
+		return this.CommandOut4.replaceAll("#Value", this.materialname);
+	}
+	
 	public String CommandPay() {
 		return this.CommandPay.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandPay1() {
+		return this.CommandPay1.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandPay2() {
+		return this.CommandPay2.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandPay3() {
+		return this.CommandPay3.replaceAll("#Value", this.materialname);
+	}
+	
+	public String CommandPay4() {
+		return this.CommandPay4.replaceAll("#Value", this.materialname);
+	}
+	
+	public String InvalidNumber() {
+		return this.InvalidNumber;
 	}
 	
 	public void cleanup() throws Exception {

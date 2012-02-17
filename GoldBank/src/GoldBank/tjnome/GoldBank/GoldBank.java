@@ -60,6 +60,7 @@ public class GoldBank extends JavaPlugin {
 		}
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " disabled");
+		System.out.println("Plugin by tjnome!");
 		
 	}
 
@@ -74,6 +75,7 @@ public class GoldBank extends JavaPlugin {
 		registerEvents();
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+		System.out.println("Plugin by tjnome!");
 		
 	}
 	
@@ -94,31 +96,34 @@ public class GoldBank extends JavaPlugin {
 					player.sendMessage("------------" + ChatColor.GREEN + " " + this.configuration.getBankName() + " " + ChatColor.WHITE + "-------------");
 					player.sendMessage(ChatColor.BLUE + "/bank info" + " " + ChatColor.WHITE + this.configuration.CommandInfo());
 					player.sendMessage(ChatColor.BLUE + "/bank top" + " " + ChatColor.WHITE + this.configuration.CommandTop());
-					player.sendMessage(ChatColor.BLUE + "/bank in" + ChatColor.WHITE + this.configuration.CommandIn());
-					player.sendMessage(ChatColor.BLUE + "/bank ut [amount]" + ChatColor.WHITE + this.configuration.CommandOut());
-					player.sendMessage(ChatColor.BLUE + "/bank betal [name] [amount] [reason] " + ChatColor.WHITE + this.configuration.CommandPay());
+					player.sendMessage(ChatColor.BLUE + "/bank in" + " " + ChatColor.WHITE + this.configuration.CommandIn());
+					player.sendMessage(ChatColor.BLUE + "/bank out [amount]" + " " + ChatColor.WHITE + this.configuration.CommandOut());
+					player.sendMessage(ChatColor.BLUE + "/bank pay [name] [amount] [reason] " + ChatColor.WHITE + this.configuration.CommandPay());
 					return true;
 				} else if (args.length == 1) {
 					if (args[0].equalsIgnoreCase("info")) {
 						if (this.configuration.getBank().containsKey(player.getName())) {
-							player.sendMessage(ChatColor.BLUE + this.configuration.CommandInfo1() + ChatColor.WHITE + this.configuration.getBank().get(player.getName()).getBankAmount() + ChatColor.BLUE + this.configuration.CommandInfo2());
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandInfo1() + ChatColor.GOLD + this.configuration.getBank().get(player.getName()).getBankAmount() + " " + ChatColor.BLUE + this.configuration.CommandInfo2());
 							return true;
 						} else {
-							player.sendMessage(ChatColor.BLUE + this.configuration.CommandInfo2());
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandInfo3());
 							return true;
 						}
 					} else if (args[0].equalsIgnoreCase("top")) {
 						HashMap<String, Integer> sortedBank = new HashMap<String, Integer>();
 						sortedBank = sortHashMap(this.configuration.banktop);
 						int count = 0;
+						int nr = 1;
 						player.sendMessage(ChatColor.BLUE + "Top 5");
 						for (String name : sortedBank.keySet()){
 							if (count < 5) {
-								player.sendMessage(name + " " + sortedBank.get(name));
+								player.sendMessage("Nr: " + nr + " " + ChatColor.BLUE + name + " " + ChatColor.WHITE + sortedBank.get(name) + " " + this.configuration.getMaterialName());
 								count++;
+								nr++;
 							}
 						}
-					} else if (args[0].equalsIgnoreCase("inn")) {
+						return true;
+					} else if (args[0].equalsIgnoreCase("in")) {
 						int amount = 0;
 						for (ItemStack stack : player.getInventory().getContents()) {
 							if (stack != null) {
@@ -128,7 +133,7 @@ public class GoldBank extends JavaPlugin {
 							}
 						}
 						if (amount == 0) {
-							player.sendMessage(ChatColor.BLUE + this.configuration.CommandIn1());
+							player.sendMessage(ChatColor.RED + this.configuration.CommandIn1());
 							
 						} else {
 							if (this.configuration.getBank().containsKey(player.getName())) {
@@ -141,13 +146,13 @@ public class GoldBank extends JavaPlugin {
 								this.configuration.banktop.put(player.getName(), amount);
 							}
 							player.getInventory().remove(this.configuration.getMaterialId());
-							player.sendMessage("Du satt inn: " + amount + " gull");
-							player.sendMessage("Du har nå på konto: " + this.configuration.getBank().get(player.getName()).getBankAmount() + " gull");
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandIn2().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE));
+							player.sendMessage(ChatColor.BLUE + this.configuration.CommandIn3().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE));
 							return true;
 						} 
 					}
 				} else if (args.length == 2) {
-					if (args[0].equalsIgnoreCase("ut")) {
+					if (args[0].equalsIgnoreCase("out")) {
 						int amount = Short.parseShort(args[1]);
 						if (amount >= 1) {
 							if (this.configuration.getBank().containsKey(player.getName())) {
@@ -163,35 +168,35 @@ public class GoldBank extends JavaPlugin {
 										for (Entry<Integer, ItemStack> e : igjen.entrySet()) {
 											gulligjen += e.getValue().getAmount();
 										}
-										player.sendMessage("Du tok ut " + amount + " gull");
+										player.sendMessage(ChatColor.BLUE + this.configuration.CommandOut1().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE));
 										if (gulligjen != 0) {
 											int gullibank = this.configuration.getBank().get(player.getName()).getBankAmount();
 											this.configuration.getBank().get(player.getName()).setBankAmount(gullibank + gulligjen);
 											this.configuration.banktop.put(player.getName(), gullibank + gulligjen);
-											player.sendMessage("Du hadde ikke plass i inventorien, og vi retunerete " + gulligjen + " gull");
+											player.sendMessage(ChatColor.BLUE + this.configuration.CommandOut2().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE));
 											return true;
 										}
 										return true;
 									} else {
-										player.sendMessage("Du har skrevet et høgre beløp en det du har i banken.");
-										player.sendMessage("Du har i banken: " + this.configuration.getBank().get(player.getName()).getBankAmount() + " gull");
+										player.sendMessage(ChatColor.RED + this.configuration.CommandOut3());
+										player.sendMessage(ChatColor.RED + this.configuration.CommandOut4().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE));
 										return true;
 									}
 								} else {
-									player.sendMessage("Du har ingenting å ta ut.");
+									player.sendMessage(ChatColor.RED + this.configuration.CommandInfo3());
 									return true;
 								}
 							} else {
-								player.sendMessage("Du har ingenting å ta ut.");
+								player.sendMessage(ChatColor.RED + this.configuration.CommandInfo3());
 								return true;
 							}
 						} else {
-							player.sendMessage("Du skrev et ugyldig tall");
+							player.sendMessage(ChatColor.RED + this.configuration.InvalidNumber());
 							return false;
 						}
 					}
 				} else if (args.length >= 4) {
-					if (args[0].equalsIgnoreCase("betal")) {
+					if (args[0].equalsIgnoreCase("pay")) {
 						Player victim = getServer().getPlayer(args[1]);
 						if (victim != null) {
 							if (victim != player) {
@@ -210,7 +215,7 @@ public class GoldBank extends JavaPlugin {
 												int playermoney = this.configuration.getBank().get(player.getName()).getBankAmount();
 												this.configuration.getBank().get(player.getName()).setBankAmount(playermoney - amount);
 												this.configuration.banktop.put(player.getName(), playermoney - amount);
-												this.configuration.getBank().put(player.getName(), new BankData());
+												this.configuration.getBank().put(victim.getName(), new BankData());
 												this.configuration.getBank().get(victim.getName()).setBankAmount(amount);
 												this.configuration.banktop.put(player.getName(), amount);
 											}
@@ -218,28 +223,28 @@ public class GoldBank extends JavaPlugin {
 											for (int i = 3; i < args.length; i++) {
 												build.append(args[i] + " ");
 											}
-											player.sendMessage("Du betalte " + amount + " gull til " + victim.getName() + " " + build.toString());
-											victim.sendMessage("Du fekk av " + player.getName() + " " + amount + " gull på grunn av: " + build.toString());
+											player.sendMessage(ChatColor.BLUE + this.configuration.CommandPay1().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE).replaceAll("#Player", ChatColor.GOLD + victim.getName()) + " " + ChatColor.WHITE + build.toString());
+											victim.sendMessage(ChatColor.BLUE + this.configuration.CommandPay2().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE).replaceAll("#Player", ChatColor.GOLD + victim.getName()) + " " + ChatColor.WHITE + build.toString());
 											return true;
 										} else {
-											player.sendMessage("Du har ikke nok gull på konto.");
-											player.sendMessage("Du har på konto: " + this.configuration.getBank().get(player.getName()).getBankAmount() + " gull");
+											player.sendMessage(ChatColor.RED + this.configuration.CommandOut3());
+											player.sendMessage(ChatColor.RED + this.configuration.CommandOut4().replaceAll("#Amount", ChatColor.GOLD + Integer.toString(amount) + ChatColor.BLUE));
 											return true;
 										}
 									} else {
-										player.sendMessage("Du har ingenting å betale med.");
+										player.sendMessage(ChatColor.RED + this.configuration.CommandInfo3());
 										return true;
 									}
 								} else {
-									player.sendMessage("Du skrev et ugyldig tall");
+									player.sendMessage(ChatColor.RED + this.configuration.InvalidNumber());
 									return false;
 								}
 							} else {
-								player.sendMessage("Du kan ikke betale til deg selv");
+								player.sendMessage(ChatColor.RED + this.configuration.CommandPay3());
 								return false;
 							}
 						} else {
-							player.sendMessage("Spiller du valgte er ikke online eller finnes ikke");
+							player.sendMessage(ChatColor.RED + this.configuration.CommandPay4());
 							return false;
 						}
 					}
