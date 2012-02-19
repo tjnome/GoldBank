@@ -57,8 +57,7 @@ public class GoldBankPlayerListner implements Listener {
 			if (!success) {
 				System.out.println("[GoldBank] Can't make sub folders");
 			}
-		}
-		
+		}	
 	}
 	
 	@EventHandler(priority=EventPriority.NORMAL)

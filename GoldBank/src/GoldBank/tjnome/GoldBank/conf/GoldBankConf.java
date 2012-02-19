@@ -5,9 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import GoldBank.tjnome.GoldBank.GoldBank;
 
@@ -40,6 +44,13 @@ public class GoldBankConf {
 	private HashMap<String, BankData> bankinfo = new HashMap<String, BankData>();
 	private HashMap<String, Object> configDefaults = new HashMap<String, Object>();
 	public HashMap<String, Integer> banktop = new HashMap<String, Integer>();
+	
+	public boolean permission;
+	public String permissionfailed;
+	
+	public boolean worldpermission;
+	public String worldpermissionfailed;
+	public List<String> permissionworlds = new ArrayList<String>();
 	
 	private int materialid;
 	private String materialname;
@@ -89,6 +100,13 @@ public class GoldBankConf {
 		this.configDefaults.put("Bank.Material.Id", 266);
 		this.configDefaults.put("Bank.Material.Name", "Gold");
 		
+		this.configDefaults.put("Bank.Permissions.Global.Enable", true);
+		this.configDefaults.put("Bank.Permissions.Global.Failed", "You do not have permission to use this command");
+		
+		this.configDefaults.put("Bank.Permissions.World.Permission", false);
+		this.configDefaults.put("Bank.Permissions.World.Enabled", getWorld());
+		this.configDefaults.put("Bank.Permissions.World.Failed", "This command is not active for this world");
+		
 		this.configDefaults.put("Bank.Command.Info", "Show you have much #Value you have in your bank account");
 		this.configDefaults.put("Bank.Command.Info-1-1", "You have: ");
 		this.configDefaults.put("Bank.Command.Info-1-2", "#Value in your bank account");
@@ -129,6 +147,13 @@ public class GoldBankConf {
 		this.bankname = this.config.getString("Bank.Name");
 		this.materialname = this.config.getString("Bank.Material.Name");
 		
+		this.permission = this.config.getBoolean("Bank.Permissions.Global.Enable");
+		this.permissionfailed = this.config.getString("Bank.Permissions.Global.Failed");
+		
+		this.worldpermission = this.config.getBoolean("Bank.Permissions.World.Permission");
+		this.worldpermissionfailed = this.config.getString("Bank.Permissions.World.Failed");
+		this.permissionworlds = this.config.getStringList("Bank.Permissions.World.Enabled");
+		
 		this.CommandInfo = this.config.getString("Bank.Command.Info");
 		this.CommandInfo1 = this.config.getString("Bank.Command.Info-1-1");
 		this.CommandInfo2 = this.config.getString("Bank.Command.Info-1-2");
@@ -154,6 +179,16 @@ public class GoldBankConf {
 		this.CommandPay2 = this.config.getString("Bank.Command.Pay-1-2");
 		this.CommandPay3 = this.config.getString("Bank.Command.Pay-2-1");
 		this.CommandPay4 = this.config.getString("Bank.Command.Pay-2-2");
+		
+		for (Player player : this.plugin.getServer().getOnlinePlayers()) {
+			if (new File(this.plugin.getDataFolder() + "/bank/", player.getName()).exists()) {
+				try {
+					bankinfo.put(player.getName(), (BankData)(GoldBankConf.load(new File(this.plugin.getDataFolder() + "/bank/", player.getName()))));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	public HashMap<String, BankData> getBank() {
@@ -254,9 +289,10 @@ public class GoldBankConf {
 	
 	public void cleanup() throws Exception {
 		if (!(bankinfo.isEmpty())) {
+			
 			try {
-				for (String player : bankinfo.keySet()) {
-					GoldBankConf.save(bankinfo.get(player), new File (this.plugin.getDataFolder() + "/bank/", player));
+				for (String playername : bankinfo.keySet()) {
+					GoldBankConf.save(bankinfo.get(playername), new File (this.plugin.getDataFolder() + "/bank/", playername));
 				}
 				bankinfo.clear();
 			} catch (Exception e) {
@@ -266,6 +302,14 @@ public class GoldBankConf {
 		if (!(banktop.isEmpty())) {
 			save(banktop, this.binFile);
 		}
+	}
+	
+	public final List<String> getWorld() {
+		List<String> Worlds = new ArrayList<String>(); 
+		for (World world : this.plugin.getServer().getWorlds()) {
+			Worlds.add(world.getName());
+		}
+		return Worlds;
 	}
 	
 	public static void save(Object obj, File binFile) throws Exception {
